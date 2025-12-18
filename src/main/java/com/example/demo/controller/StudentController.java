@@ -19,16 +19,14 @@ public class StudentController {
     @Autowired
     StudentService src;
     @PatchMapping("/post")
-    public StudentEntity postdata(@RequestBody StudentEntity st){ //to show the only one data
+    public StudentEntity postdata(@RequestBody StudentEntity st){ 
         return src.savedata(st);
     }
     @GetMapping("/get")
-    // list used to retrive all the data
     public List<StudentEntity> getdata(){
         return src.retdata();
     }
     @GetMapping("/getid/{id}")
-    //particular details only taken @PathVariable is used to work for {id} 
     public StudentEntity getIdVal(@PathVariable int id){
         return src.id(id);
     }
