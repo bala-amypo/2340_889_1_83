@@ -23,7 +23,7 @@ public class StudentService {
         return new ArrayList<>(mp.values());
     }
     //retrive particular data
-    public Studententity id(int id) {
+    public StudentEntity id(int id) {
         return mp.get(id);
     }
     //update
