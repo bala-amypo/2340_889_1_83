@@ -1,5 +1,8 @@
 package com.example.demo.model;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 @Entity
 @Table(
     name = "sla_requirements",
