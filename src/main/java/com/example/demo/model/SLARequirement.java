@@ -1,3 +1,5 @@
+package com.example.demo.model;
+
 @Entity
 @Table(
     name = "sla_requirements",
@@ -10,17 +12,13 @@
 @NoArgsConstructor
 @AllArgsConstructor
 public class SLARequirement {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "requirement_name", nullable = false, unique = true)
     private String requirementName;
-
     @Column(length = 500)
     private String description;
-
     @Column(nullable = false)
     @Min(value = 1, message = "Max delivery days must be greater than 0")
     private Integer maxDeliveryDays;
