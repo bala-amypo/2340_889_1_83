@@ -73,4 +73,14 @@ public class SLARequirement {
     public void setActive(Boolean active) {
         this.active = active;
     }
+     public SLARequirement(Long id, String requirementName, String description,
+            @Min(value = 1, message = "Max delivery days must be greater than 0") Integer maxDeliveryDays,
+            Double minQualityScore, Boolean active) {
+        this.id = id;
+        this.requirementName = requirementName;
+        this.description = description;
+        this.maxDeliveryDays = maxDeliveryDays;
+        this.minQualityScore = minQualityScore;
+        this.active = active;
+    }
 }
