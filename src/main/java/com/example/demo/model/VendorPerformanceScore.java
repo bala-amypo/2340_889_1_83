@@ -63,9 +63,7 @@ public class VendorPerformanceScore {
     @PrePersist
     @PreUpdate
     protected void calculateOverallScore() {
-        this.overallScore =
-                (onTimePercentage * ON_TIME_WEIGHT) +
-                (qualityCompliancePercentage * QUALITY_WEIGHT);
+        this.overallScore =(onTimePercentage * ON_TIME_WEIGHT) +(qualityCompliancePercentage * QUALITY_WEIGHT);
 
         this.calculatedAt = Instant.now();
     }
@@ -124,5 +122,15 @@ public class VendorPerformanceScore {
     public static double getQualityWeight() {
         return QUALITY_WEIGHT;
     }
-    
+    public VendorPerformanceScore(Long id, Vendor vendor,
+            @DecimalMin("0.0") @DecimalMax("100.0") Double onTimePercentage,
+            @DecimalMin("0.0") @DecimalMax("100.0") Double qualityCompliancePercentage,
+            @DecimalMin("0.0") @DecimalMax("100.0") Double overallScore, Instant calculatedAt) {
+        this.id = id;
+        this.vendor = vendor;
+        this.onTimePercentage = onTimePercentage;
+        this.qualityCompliancePercentage = qualityCompliancePercentage;
+        this.overallScore = overallScore;
+        this.calculatedAt = calculatedAt;
+    }
 }
