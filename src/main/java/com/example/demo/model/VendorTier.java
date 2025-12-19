@@ -79,5 +79,12 @@ public class VendorTier {
     public void setActive(Boolean active) {
         this.active = active;
     }
-
+     public VendorTier(Long id, String tierName, @DecimalMin("0.0") @DecimalMax("100.0") Double minScoreThreshold,
+            String description, Boolean active) {
+        this.id = id;
+        this.tierName = tierName;
+        this.minScoreThreshold = minScoreThreshold;
+        this.description = description;
+        this.active = active;
+    }
 }
