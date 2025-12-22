@@ -27,4 +27,7 @@ public class OpenApiConfig {
                         .bearerFormat("JWT")));
                         
     }
+    .servers(List.of(
+                        new Server().url("https://9130.pro604cr.amypo.ai/")
+                ));
 }
