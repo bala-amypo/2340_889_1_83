@@ -1,8 +1,11 @@
 package com.example.demo.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.demo.model.VendorPerformanceScore;
-public interface VendorPerformanceScoreRepository extends JpaRepository<VendorPerformanceScore,Long>{
-     List<VendorPerformanceScore> findByVendorOrderByCalculatedAtDesc(Long vendorId);
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
 
+@Repository
+public interface VendorPerformanceScoreRepository extends JpaRepository<VendorPerformanceScore, Long> {
+    List<VendorPerformanceScore> findByVendorIdOrderByCalculatedAtDesc(Long vendorId);
 }
