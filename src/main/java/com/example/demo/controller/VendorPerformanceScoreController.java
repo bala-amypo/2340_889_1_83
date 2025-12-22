@@ -2,35 +2,39 @@ package com.example.demo.controller;
 
 import com.example.demo.model.VendorPerformanceScore;
 import com.example.demo.service.VendorPerformanceScoreService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/scores")
+@Tag(name = "Performance Scores", description = "Vendor performance score management")
+@SecurityRequirement(name = "Bearer Authentication")
 public class VendorPerformanceScoreController {
+    private final VendorPerformanceScoreService vendorPerformanceScoreService;
 
-    private final VendorPerformanceScoreService service;
-
-    public VendorPerformanceScoreController(VendorPerformanceScoreService service) {
-        this.service = service;
+    public VendorPerformanceScoreController(VendorPerformanceScoreService vendorPerformanceScoreService) {
+        this.vendorPerformanceScoreService = vendorPerformanceScoreService;
     }
 
-    // POST /api/scores/calculate/{vendorId}
     @PostMapping("/calculate/{vendorId}")
-    public VendorPerformanceScore calculate(@PathVariable Long vendorId) {
-        return service.calculateScore(vendorId);
+    @Operation(summary = "Calculate performance score for vendor")
+    public ResponseEntity<VendorPerformanceScore> calculateScore(@PathVariable Long vendorId) {
+        return ResponseEntity.ok(vendorPerformanceScoreService.calculateScore(vendorId));
     }
 
-    // GET /api/scores/latest/{vendorId}
     @GetMapping("/latest/{vendorId}")
-    public VendorPerformanceScore getLatest(@PathVariable Long vendorId) {
-        return service.getLatestScore(vendorId);
+    @Operation(summary = "Get latest performance score")
+    public ResponseEntity<VendorPerformanceScore> getLatestScore(@PathVariable Long vendorId) {
+        return ResponseEntity.ok(vendorPerformanceScoreService.getLatestScore(vendorId));
     }
 
-    // GET /api/scores/vendor/{vendorId}
     @GetMapping("/vendor/{vendorId}")
-    public List<VendorPerformanceScore> getHistory(@PathVariable Long vendorId) {
-        return service.getScoresForVendor(vendorId);
+    @Operation(summary = "Get performance score history")
+    public ResponseEntity<List<VendorPerformanceScore>> getScoresForVendor(@PathVariable Long vendorId) {
+        return ResponseEntity.ok(vendorPerformanceScoreService.getScoresForVendor(vendorId));
     }
 }

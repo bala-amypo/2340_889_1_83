@@ -2,47 +2,52 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Vendor;
 import com.example.demo.service.VendorService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/vendors")
+@Tag(name = "Vendors", description = "Vendor management")
+@SecurityRequirement(name = "Bearer Authentication")
 public class VendorController {
-
     private final VendorService vendorService;
 
     public VendorController(VendorService vendorService) {
         this.vendorService = vendorService;
     }
 
-    // POST /api/vendors
     @PostMapping
-    public Vendor createVendor(@RequestBody Vendor vendor) {
-        return vendorService.createVendor(vendor);
+    @Operation(summary = "Create a new vendor")
+    public ResponseEntity<Vendor> createVendor(@RequestBody Vendor vendor) {
+        return ResponseEntity.ok(vendorService.createVendor(vendor));
     }
 
-    // PUT /api/vendors/{id}
     @PutMapping("/{id}")
-    public Vendor updateVendor(@PathVariable Long id, @RequestBody Vendor vendor) {
-        return vendorService.updateVendor(id, vendor);
+    @Operation(summary = "Update vendor")
+    public ResponseEntity<Vendor> updateVendor(@PathVariable Long id, @RequestBody Vendor vendor) {
+        return ResponseEntity.ok(vendorService.updateVendor(id, vendor));
     }
 
-    // GET /api/vendors/{id}
     @GetMapping("/{id}")
-    public Vendor getVendor(@PathVariable Long id) {
-        return vendorService.getVendorById(id);
+    @Operation(summary = "Get vendor by ID")
+    public ResponseEntity<Vendor> getVendor(@PathVariable Long id) {
+        return ResponseEntity.ok(vendorService.getVendorById(id));
     }
 
-    // GET /api/vendors
     @GetMapping
-    public List<Vendor> getAllVendors() {
-        return vendorService.getAllVendors();
+    @Operation(summary = "Get all vendors")
+    public ResponseEntity<List<Vendor>> getAllVendors() {
+        return ResponseEntity.ok(vendorService.getAllVendors());
     }
 
-    // PUT /api/vendors/{id}/deactivate
     @PutMapping("/{id}/deactivate")
-    public void deactivateVendor(@PathVariable Long id) {
+    @Operation(summary = "Deactivate vendor")
+    public ResponseEntity<Void> deactivateVendor(@PathVariable Long id) {
         vendorService.deactivateVendor(id);
+        return ResponseEntity.ok().build();
     }
 }
