@@ -9,7 +9,6 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor createVendor(Vendor vendor) {
-        // Check duplicate name
         if (vendorRepository.existsByNameIgnoreCase(vendor.getName())) {
             throw new RuntimeException("Vendor with this name already exists");
         }
