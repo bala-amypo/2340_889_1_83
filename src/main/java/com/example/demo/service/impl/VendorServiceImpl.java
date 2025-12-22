@@ -3,11 +3,11 @@ package com.example.demo.service.impl;
 import com.example.demo.model.Vendor;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.VendorService;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class VendorServiceImpl implements VendorService {
-
     private final VendorRepository vendorRepository;
 
     public VendorServiceImpl(VendorRepository vendorRepository) {
@@ -16,29 +16,29 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor createVendor(Vendor vendor) {
-        if (vendorRepository.existsByNameIgnoreCase(vendor.getName())) {
-            throw new RuntimeException("Vendor with this name already exists");
+        if (vendorRepository.existsByName(vendor.getName())) {
+            throw new IllegalArgumentException("Vendor name must be unique");
         }
-        vendor.setActive(true);
+        if (vendor.getActive() == null) {
+            vendor.setActive(true);
+        }
         return vendorRepository.save(vendor);
     }
 
     @Override
     public Vendor updateVendor(Long id, Vendor vendor) {
-        Vendor existingVendor = vendorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vendor not found"));
-
-        existingVendor.setName(vendor.getName());
-        existingVendor.setEmail(vendor.getEmail());
-        existingVendor.setPhone(vendor.getPhone());
-
-        return vendorRepository.save(existingVendor);
+        Vendor existing = getVendorById(id);
+        existing.setName(vendor.getName());
+        existing.setContactEmail(vendor.getContactEmail());
+        existing.setContactPhone(vendor.getContactPhone());
+        existing.setActive(vendor.getActive());
+        return vendorRepository.save(existing);
     }
 
     @Override
     public Vendor getVendorById(Long id) {
         return vendorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vendor not found"));
+            .orElseThrow(() -> new RuntimeException("Vendor not found"));
     }
 
     @Override
@@ -48,9 +48,7 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public void deactivateVendor(Long id) {
-        Vendor vendor = vendorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vendor not found"));
-
+        Vendor vendor = getVendorById(id);
         vendor.setActive(false);
         vendorRepository.save(vendor);
     }

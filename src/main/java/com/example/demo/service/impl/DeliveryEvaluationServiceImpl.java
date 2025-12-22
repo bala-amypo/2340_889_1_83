@@ -1,42 +1,43 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
+import com.example.demo.model.DeliveryEvaluation;
+import com.example.demo.model.Vendor;
+import com.example.demo.model.SLARequirement;
+import com.example.demo.repository.DeliveryEvaluationRepository;
+import com.example.demo.repository.VendorRepository;
+import com.example.demo.repository.SLARequirementRepository;
 import com.example.demo.service.DeliveryEvaluationService;
-
-import java.util.Date;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
+@Service
 public class DeliveryEvaluationServiceImpl implements DeliveryEvaluationService {
-
-    private final DeliveryEvaluationRepository evaluationRepository;
+    private final DeliveryEvaluationRepository deliveryEvaluationRepository;
     private final VendorRepository vendorRepository;
-    private final SLARequirementRepository slaRepository;
+    private final SLARequirementRepository slaRequirementRepository;
 
-    public DeliveryEvaluationServiceImpl(
-            DeliveryEvaluationRepository evaluationRepository,
-            VendorRepository vendorRepository,
-            SLARequirementRepository slaRepository) {
-        this.evaluationRepository = evaluationRepository;
+    public DeliveryEvaluationServiceImpl(DeliveryEvaluationRepository deliveryEvaluationRepository,
+                                       VendorRepository vendorRepository,
+                                       SLARequirementRepository slaRequirementRepository) {
+        this.deliveryEvaluationRepository = deliveryEvaluationRepository;
         this.vendorRepository = vendorRepository;
-        this.slaRepository = slaRepository;
+        this.slaRequirementRepository = slaRequirementRepository;
     }
 
     @Override
     public DeliveryEvaluation createEvaluation(DeliveryEvaluation evaluation) {
-
         Vendor vendor = vendorRepository.findById(evaluation.getVendor().getId())
-                .orElseThrow(() -> new RuntimeException("Vendor not found"));
+            .orElseThrow(() -> new RuntimeException("Vendor not found"));
+        
+        SLARequirement sla = slaRequirementRepository.findById(evaluation.getSlaRequirement().getId())
+            .orElseThrow(() -> new RuntimeException("SLA requirement not found"));
 
         if (!vendor.getActive()) {
-            throw new IllegalStateException("Only active vendors allowed");
+            throw new IllegalStateException("Evaluations can only be created for active vendors");
         }
 
-        SLARequirement sla = slaRepository.findById(evaluation.getSlaRequirement().getId())
-                .orElseThrow(() -> new RuntimeException("SLA requirement not found"));
-
         if (evaluation.getActualDeliveryDays() < 0) {
-            throw new IllegalArgumentException("actualDeliveryDays must be >= 0");
+            throw new IllegalArgumentException("Actual delivery days must be >= 0");
         }
 
         if (evaluation.getQualityScore() < 0 || evaluation.getQualityScore() > 100) {
@@ -45,30 +46,25 @@ public class DeliveryEvaluationServiceImpl implements DeliveryEvaluationService 
 
         evaluation.setVendor(vendor);
         evaluation.setSlaRequirement(sla);
-        evaluation.setEvaluationDate(new Date());
+        evaluation.setMeetsDeliveryTarget(evaluation.getActualDeliveryDays() <= sla.getMaxDeliveryDays());
+        evaluation.setMeetsQualityTarget(evaluation.getQualityScore() >= sla.getMinQualityScore());
 
-        evaluation.setMeetsDeliveryTarget(
-                evaluation.getActualDeliveryDays() <= sla.getMaxDeliveryDays());
-
-        evaluation.setMeetsQualityTarget(
-                evaluation.getQualityScore() >= sla.getMinQualityScore());
-
-        return evaluationRepository.save(evaluation);
+        return deliveryEvaluationRepository.save(evaluation);
     }
 
     @Override
     public DeliveryEvaluation getEvaluationById(Long id) {
-        return evaluationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Evaluation not found"));
+        return deliveryEvaluationRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Evaluation not found"));
     }
 
     @Override
     public List<DeliveryEvaluation> getEvaluationsForVendor(Long vendorId) {
-        return evaluationRepository.findByVendorId(vendorId);
+        return deliveryEvaluationRepository.findByVendorId(vendorId);
     }
 
     @Override
     public List<DeliveryEvaluation> getEvaluationsForRequirement(Long requirementId) {
-        return evaluationRepository.findBySlaRequirementId(requirementId);
+        return deliveryEvaluationRepository.findBySlaRequirementId(requirementId);
     }
 }
