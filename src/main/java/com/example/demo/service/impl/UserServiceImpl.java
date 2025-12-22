@@ -1,55 +1,46 @@
-@Service
+package com.example.demo.service.impl;
+
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder) {
+        this.repository = repository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public User register(String email, String password, String role) {
-
-        if (userRepository.existsByEmail(email)) {
-            throw new DuplicateResourceException(
-                    "User already exists with email: " + email);
+        if (repository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("Email must be unique");
         }
-
         User user = new User();
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(role);
-        user.setActive(true);
-
-        return userRepository.save(user);
+        return repository.save(user);
     }
 
     @Override
     public User login(String email, String password) {
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Invalid email or password"));
-
-        if (!user.isActive()) {
-            throw new IllegalStateException("User account is inactive");
-        }
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException(
-                    "Invalid email or password");
+            throw new IllegalArgumentException("Invalid credentials");
         }
-
         return user;
     }
 
     @Override
     public User getByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "User not found with email: " + email));
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
