@@ -4,6 +4,7 @@ import com.example.demo.model.Vendor;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.VendorService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -15,6 +16,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
+    @Transactional
     public Vendor createVendor(Vendor vendor) {
         if (vendorRepository.existsByName(vendor.getName())) {
             throw new IllegalArgumentException("Vendor name must be unique");
@@ -26,6 +28,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
+    @Transactional
     public Vendor updateVendor(Long id, Vendor vendor) {
         Vendor existing = getVendorById(id);
         existing.setName(vendor.getName());
@@ -47,6 +50,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
+    @Transactional
     public void deactivateVendor(Long id) {
         Vendor vendor = getVendorById(id);
         vendor.setActive(false);

@@ -8,6 +8,7 @@ import com.example.demo.repository.VendorRepository;
 import com.example.demo.repository.SLARequirementRepository;
 import com.example.demo.service.DeliveryEvaluationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -17,14 +18,15 @@ public class DeliveryEvaluationServiceImpl implements DeliveryEvaluationService 
     private final SLARequirementRepository slaRequirementRepository;
 
     public DeliveryEvaluationServiceImpl(DeliveryEvaluationRepository deliveryEvaluationRepository,
-                                       VendorRepository vendorRepository,
-                                       SLARequirementRepository slaRequirementRepository) {
+                                    VendorRepository vendorRepository,
+                                    SLARequirementRepository slaRequirementRepository) {
         this.deliveryEvaluationRepository = deliveryEvaluationRepository;
         this.vendorRepository = vendorRepository;
         this.slaRequirementRepository = slaRequirementRepository;
     }
 
     @Override
+    @Transactional
     public DeliveryEvaluation createEvaluation(DeliveryEvaluation evaluation) {
         Vendor vendor = vendorRepository.findById(evaluation.getVendor().getId())
             .orElseThrow(() -> new RuntimeException("Vendor not found"));

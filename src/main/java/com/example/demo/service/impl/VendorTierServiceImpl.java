@@ -4,6 +4,7 @@ import com.example.demo.model.VendorTier;
 import com.example.demo.repository.VendorTierRepository;
 import com.example.demo.service.VendorTierService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -15,6 +16,7 @@ public class VendorTierServiceImpl implements VendorTierService {
     }
 
     @Override
+    @Transactional
     public VendorTier createTier(VendorTier tier) {
         if (tier.getMinScoreThreshold() < 0 || tier.getMinScoreThreshold() > 100) {
             throw new IllegalArgumentException("Min score threshold must be between 0–100");
@@ -26,6 +28,7 @@ public class VendorTierServiceImpl implements VendorTierService {
     }
 
     @Override
+    @Transactional
     public VendorTier updateTier(Long id, VendorTier tier) {
         VendorTier existing = getTierById(id);
         existing.setTierName(tier.getTierName());
@@ -47,6 +50,7 @@ public class VendorTierServiceImpl implements VendorTierService {
     }
 
     @Override
+    @Transactional
     public void deactivateTier(Long id) {
         VendorTier tier = getTierById(id);
         tier.setActive(false);

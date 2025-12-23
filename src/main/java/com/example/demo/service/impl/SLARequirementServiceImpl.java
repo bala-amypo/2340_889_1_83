@@ -4,6 +4,7 @@ import com.example.demo.model.SLARequirement;
 import com.example.demo.repository.SLARequirementRepository;
 import com.example.demo.service.SLARequirementService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -15,6 +16,7 @@ public class SLARequirementServiceImpl implements SLARequirementService {
     }
 
     @Override
+    @Transactional
     public SLARequirement createRequirement(SLARequirement req) {
         if (req.getMaxDeliveryDays() <= 0) {
             throw new IllegalArgumentException("Max delivery days must be greater than 0");
@@ -29,6 +31,7 @@ public class SLARequirementServiceImpl implements SLARequirementService {
     }
 
     @Override
+    @Transactional
     public SLARequirement updateRequirement(Long id, SLARequirement req) {
         SLARequirement existing = getRequirementById(id);
         if (!existing.getRequirementName().equals(req.getRequirementName()) && 
@@ -55,6 +58,7 @@ public class SLARequirementServiceImpl implements SLARequirementService {
     }
 
     @Override
+    @Transactional
     public void deactivateRequirement(Long id) {
         SLARequirement requirement = getRequirementById(id);
         requirement.setActive(false);

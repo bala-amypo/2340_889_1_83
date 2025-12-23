@@ -9,6 +9,7 @@ import com.example.demo.repository.VendorRepository;
 import com.example.demo.repository.VendorTierRepository;
 import com.example.demo.service.VendorPerformanceScoreService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class VendorPerformanceScoreServiceImpl implements VendorPerformanceScore
     }
 
     @Override
+    @Transactional
     public VendorPerformanceScore calculateScore(Long vendorId) {
         Vendor vendor = vendorRepository.findById(vendorId)
             .orElseThrow(() -> new RuntimeException("Vendor not found"));
