@@ -35,8 +35,7 @@ public class DeliveryEvaluation {
 
     public DeliveryEvaluation() {}
 
-    public DeliveryEvaluation(Vendor vendor, SLARequirement slaRequirement, Integer actualDeliveryDays, 
-                            Double qualityScore, LocalDate evaluationDate) {
+    public DeliveryEvaluation(Vendor vendor, SLARequirement slaRequirement, Integer actualDeliveryDays,Double qualityScore, LocalDate evaluationDate) {
         this.vendor = vendor;
         this.slaRequirement = slaRequirement;
         this.actualDeliveryDays = actualDeliveryDays;
