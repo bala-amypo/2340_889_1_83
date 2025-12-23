@@ -15,7 +15,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-            .addServersItem(new Server().url("https://9130.pro604cr.amypo.ai/").description("Development Server"))
+            .addServersItem(new Server().url("https://9323.pro604cr.amypo.ai/").description("Development Server"))
             .info(new Info()
                 .title("Vendor SLA Performance Tracker API")
                 .version("1.0")
