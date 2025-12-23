@@ -17,9 +17,7 @@ public class DeliveryEvaluationServiceImpl implements DeliveryEvaluationService 
     private final VendorRepository vendorRepository;
     private final SLARequirementRepository slaRequirementRepository;
 
-    public DeliveryEvaluationServiceImpl(DeliveryEvaluationRepository deliveryEvaluationRepository,
-                                    VendorRepository vendorRepository,
-                                    SLARequirementRepository slaRequirementRepository) {
+    public DeliveryEvaluationServiceImpl(DeliveryEvaluationRepository deliveryEvaluationRepository,VendorRepository vendorRepository,SLARequirementRepository slaRequirementRepository) {
         this.deliveryEvaluationRepository = deliveryEvaluationRepository;
         this.vendorRepository = vendorRepository;
         this.slaRequirementRepository = slaRequirementRepository;
