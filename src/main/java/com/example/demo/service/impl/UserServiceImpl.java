@@ -4,44 +4,29 @@ import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
+
+    private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder) {
+        this.repository = repository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    @Transactional
     public User register(String email, String password, String role) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("Email must be unique");
+        if (repository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("unique");
         }
-        User user = new User();
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setRole(role);
-        return userRepository.save(user);
-    }
-
-    @Override
-    public User login(String email, String password) {
-        User user = getByEmail(email);
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("Invalid credentials");
-        }
-        return user;
+        User user = new User(email, passwordEncoder.encode(password), role);
+        return repository.save(user);
     }
 
     @Override
     public User getByEmail(String email) {
-        return userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 }
