@@ -1,77 +1,67 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.VendorPerformanceScore;
 import com.example.demo.model.Vendor;
-import com.example.demo.model.DeliveryEvaluation;
-import com.example.demo.repository.VendorPerformanceScoreRepository;
+import com.example.demo.model.VendorPerformanceScore;
 import com.example.demo.repository.DeliveryEvaluationRepository;
+import com.example.demo.repository.VendorPerformanceScoreRepository;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.repository.VendorTierRepository;
 import com.example.demo.service.VendorPerformanceScoreService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDateTime;
+
+import java.sql.Timestamp;
 import java.util.List;
 
-@Service
 public class VendorPerformanceScoreServiceImpl implements VendorPerformanceScoreService {
-    private final VendorPerformanceScoreRepository vendorPerformanceScoreRepository;
-    private final DeliveryEvaluationRepository deliveryEvaluationRepository;
-    private final VendorRepository vendorRepository;
-    private final VendorTierRepository vendorTierRepository;
 
-    public VendorPerformanceScoreServiceImpl(VendorPerformanceScoreRepository vendorPerformanceScoreRepository,
-                                           DeliveryEvaluationRepository deliveryEvaluationRepository,
-                                           VendorRepository vendorRepository,
-                                           VendorTierRepository vendorTierRepository) {
-        this.vendorPerformanceScoreRepository = vendorPerformanceScoreRepository;
-        this.deliveryEvaluationRepository = deliveryEvaluationRepository;
+    private final VendorPerformanceScoreRepository scoreRepository;
+    private final DeliveryEvaluationRepository evaluationRepository;
+    private final VendorRepository vendorRepository;
+    private final VendorTierRepository tierRepository;
+
+    public VendorPerformanceScoreServiceImpl(
+            VendorPerformanceScoreRepository scoreRepository,
+            DeliveryEvaluationRepository evaluationRepository,
+            VendorRepository vendorRepository,
+            VendorTierRepository tierRepository) {
+        this.scoreRepository = scoreRepository;
+        this.evaluationRepository = evaluationRepository;
         this.vendorRepository = vendorRepository;
-        this.vendorTierRepository = vendorTierRepository;
+        this.tierRepository = tierRepository;
     }
 
     @Override
-    @Transactional
     public VendorPerformanceScore calculateScore(Long vendorId) {
         Vendor vendor = vendorRepository.findById(vendorId)
-            .orElseThrow(() -> new RuntimeException("Vendor not found"));
+                .orElseThrow(() -> new IllegalArgumentException("not found"));
 
-        List<DeliveryEvaluation> evaluations = deliveryEvaluationRepository.findByVendorId(vendorId);
+        var evaluations = evaluationRepository.findByVendorId(vendorId);
+        int total = evaluations.size();
 
-        double onTimePercentage = 0.0;
-        double qualityCompliancePercentage = 0.0;
+        double onTime = total == 0 ? 0 :
+                (evaluations.stream().filter(e -> Boolean.TRUE.equals(e.getMeetsDeliveryTarget())).count() * 100.0) / total;
 
-        if (!evaluations.isEmpty()) {
-            long onTimeCount = evaluations.stream().filter(DeliveryEvaluation::getMeetsDeliveryTarget).count();
-            long qualityCount = evaluations.stream().filter(DeliveryEvaluation::getMeetsQualityTarget).count();
-            
-            onTimePercentage = (onTimeCount * 100.0) / evaluations.size();
-            qualityCompliancePercentage = (qualityCount * 100.0) / evaluations.size();
-        }
+        double quality = total == 0 ? 0 :
+                (evaluations.stream().filter(e -> Boolean.TRUE.equals(e.getMeetsQualityTarget())).count() * 100.0) / total;
 
-        double overallScore = (onTimePercentage * 0.5) + (qualityCompliancePercentage * 0.5);
+        double overall = (onTime + quality) / 2;
 
         VendorPerformanceScore score = new VendorPerformanceScore();
         score.setVendor(vendor);
-        score.setOnTimePercentage(onTimePercentage);
-        score.setQualityCompliancePercentage(qualityCompliancePercentage);
-        score.setOverallScore(overallScore);
-        score.setCalculatedAt(LocalDateTime.now());
+        score.setOnTimePercentage(onTime);
+        score.setQualityCompliancePercentage(quality);
+        score.setOverallScore(overall);
+        score.setCalculatedAt(new Timestamp(System.currentTimeMillis()));
 
-        return vendorPerformanceScoreRepository.save(score);
+        return scoreRepository.save(score);
     }
 
     @Override
     public VendorPerformanceScore getLatestScore(Long vendorId) {
-        List<VendorPerformanceScore> scores = vendorPerformanceScoreRepository.findByVendorIdOrderByCalculatedAtDesc(vendorId);
-        if (scores.isEmpty()) {
-            throw new RuntimeException("No scores found for vendor");
-        }
-        return scores.get(0);
+        return scoreRepository.findByVendorOrderByCalculatedAtDesc(vendorId).get(0);
     }
 
     @Override
     public List<VendorPerformanceScore> getScoresForVendor(Long vendorId) {
-        return vendorPerformanceScoreRepository.findByVendorIdOrderByCalculatedAtDesc(vendorId);
+        return scoreRepository.findByVendorOrderByCalculatedAtDesc(vendorId);
     }
 }
