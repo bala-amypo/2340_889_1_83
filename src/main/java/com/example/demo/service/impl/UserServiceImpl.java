@@ -4,13 +4,16 @@ import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository repository,
+                           PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -20,8 +23,9 @@ public class UserServiceImpl implements UserService {
         if (repository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("unique");
         }
-        User user = new User(email, passwordEncoder.encode(password), role);
-        return repository.save(user);
+        return repository.save(
+                new User(email, passwordEncoder.encode(password), role)
+        );
     }
 
     @Override

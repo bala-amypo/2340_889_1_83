@@ -6,6 +6,7 @@ import com.example.demo.service.SLARequirementService;
 
 import java.util.List;
 
+@Service
 public class SLARequirementServiceImpl implements SLARequirementService {
 
     private final SLARequirementRepository repository;

@@ -6,6 +6,7 @@ import com.example.demo.service.VendorTierService;
 
 import java.util.List;
 
+@Service
 public class VendorTierServiceImpl implements VendorTierService {
 
     private final VendorTierRepository repository;

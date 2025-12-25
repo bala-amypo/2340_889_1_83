@@ -11,6 +11,7 @@ import com.example.demo.service.VendorPerformanceScoreService;
 import java.sql.Timestamp;
 import java.util.List;
 
+@Service
 public class VendorPerformanceScoreServiceImpl implements VendorPerformanceScoreService {
 
     private final VendorPerformanceScoreRepository scoreRepository;

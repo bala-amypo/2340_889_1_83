@@ -6,6 +6,7 @@ import com.example.demo.service.VendorService;
 
 import java.util.List;
 
+@Service
 public class VendorServiceImpl implements VendorService {
 
     private final VendorRepository vendorRepository;

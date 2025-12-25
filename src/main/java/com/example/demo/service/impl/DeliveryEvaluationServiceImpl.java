@@ -7,9 +7,11 @@ import com.example.demo.repository.DeliveryEvaluationRepository;
 import com.example.demo.repository.SLARequirementRepository;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.DeliveryEvaluationService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class DeliveryEvaluationServiceImpl implements DeliveryEvaluationService {
 
     private final DeliveryEvaluationRepository evaluationRepository;
