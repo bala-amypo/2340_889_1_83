@@ -3,39 +3,23 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "sla_requirements", uniqueConstraints = {
-    @UniqueConstraint(columnNames = "requirement_name")
-})
+@Table(name = "sla_requirements", uniqueConstraints = @UniqueConstraint(columnNames = "requirementName"))
 public class SLARequirement {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "requirement_name", nullable = false, unique = true)
     private String requirementName;
-
-    @Column(length = 500)
     private String description;
-
-    @Column(name = "max_delivery_days", nullable = false)
     private Integer maxDeliveryDays;
-
-    @Column(name = "min_quality_score", nullable = false)
     private Double minQualityScore;
-
-    @Column(nullable = false)
     private Boolean active = true;
-
-    @PrePersist
-    protected void onCreate() {
-        if (active == null) {
-            active = true;
-        }
-    }
 
     public SLARequirement() {}
 
-    public SLARequirement(String requirementName, String description, Integer maxDeliveryDays, Double minQualityScore) {
+    public SLARequirement(String requirementName, String description,
+                          Integer maxDeliveryDays, Double minQualityScore) {
         this.requirementName = requirementName;
         this.description = description;
         this.maxDeliveryDays = maxDeliveryDays;

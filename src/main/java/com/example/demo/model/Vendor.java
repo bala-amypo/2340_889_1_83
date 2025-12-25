@@ -1,48 +1,22 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Entity
-@Table(name = "vendors", uniqueConstraints = {
-    @UniqueConstraint(columnNames = "name")
-})
+@Table(name = "vendors", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 public class Vendor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
     private String name;
-
-    @Column(name = "contact_email")
     private String contactEmail;
-
-    @Column(name = "contact_phone")
     private String contactPhone;
-
-    @Column(nullable = false)
     private Boolean active = true;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-        if (active == null) {
-            active = true;
-        }
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public Vendor() {}
 
@@ -51,6 +25,17 @@ public class Vendor {
         this.contactEmail = contactEmail;
         this.contactPhone = contactPhone;
         this.active = true;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Timestamp(System.currentTimeMillis());
+        updatedAt = createdAt;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Timestamp(System.currentTimeMillis());
     }
 
     public Long getId() { return id; }
@@ -67,10 +52,4 @@ public class Vendor {
 
     public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
