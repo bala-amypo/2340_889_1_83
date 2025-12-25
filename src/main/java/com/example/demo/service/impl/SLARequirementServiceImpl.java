@@ -3,6 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.model.SLARequirement;
 import com.example.demo.repository.SLARequirementRepository;
 import com.example.demo.service.SLARequirementService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 

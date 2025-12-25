@@ -7,6 +7,7 @@ import com.example.demo.repository.VendorPerformanceScoreRepository;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.repository.VendorTierRepository;
 import com.example.demo.service.VendorPerformanceScoreService;
+import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
